@@ -87,11 +87,26 @@ if __name__ == "__main__":
 
     access_token = state["access_token"]
 
-    feeds = ["http://www.righto.com/feeds/posts/default?alt=rss"]
+    feeds = [
+        "http://www.righto.com/feeds/posts/default?alt=rss",
+        "https://arcadeblogger.com/feed/",
+        "https://cockeyed.com/index.xml",
+        "http://www.etotheipiplusone.net/?feed=rss2",
+        "https://fanf.dreamwidth.org/data/rss",
+        {
+            "url": "http://rescue1130.blogspot.com/feeds/posts/default?alt=rss",
+            "title": "Rescue 1130",
+        },
+    ]
 
-    for url in feeds:
-        d = feedparser.parse(url)
-        feed_title = d["feed"].get("title", "rss")
+    for feed in feeds:
+        if isinstance(feed, str):
+            d = feedparser.parse(feed)
+            feed_title = d["feed"].get("title", "rss")
+        else:
+            d = feedparser.parse(feed["url"])
+            feed_title = feed.get("title", d["feed"].get("title", "rss"))
+
         for entry in d.entries:
             url = entry.link
             title = entry.title
